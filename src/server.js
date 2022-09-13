@@ -1,13 +1,24 @@
 import express from 'express'
 import {connectDB} from '*/config/mongodb'
 import {env} from '*/config/environment' 
-const app = express()
+import {apiV1} from '*/routes/v1'
 
 
- connectDB().catch(console.log)
-app.get('/', (req, res) => {
-  res.end('<h1>Hello world</h1>')
+ connectDB()
+ .then(() =>console.log('Kết nối thành công với CSDL'))
+ .then(() => bootServer())
+ .catch(error=>{ 
+  console.error(error)
+  process.exit(1)
 })
-app.listen(env.PORT, env.HOST , () => { 
-    console.log(`hello world ${env.PORT}:${env.HOST}`)
- })
+
+
+
+ const bootServer = () => { 
+  const app = express()
+  app.use(express.json())
+  app.use('/v1',apiV1)
+  app.listen(env.APP_PORT, env.APP_HOST , () => { 
+      console.log(`hello world ${env.APP_HOST}:${env.APP_PORT}`)
+   })
+  }
